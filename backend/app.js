@@ -1,10 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 
-// const userRoutes = require('./routes/routesUser');
-const modelSauce = require('./models/modelSauce');
+const routesSauces = require('./routes/routesSauces');
+const routesUser = require('./routes/routesUser');
 
-mongoose.connect('mongodb+srv://Vivi:UserV7MGODB94@clusterv.nxwipcn.mongodb.net/?retryWrites=true&w=majority',
+
+mongoose.connect('mongodb+srv://Vivi:UserV7MGODB94@clusterv.nxwipcn.mongodb.net/piquante?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -49,30 +51,10 @@ app.use((req, res, next) => {
 //   res.status(200).json(sauce);
 // });
 
-app.use('/api/sauces', (req, res, next) => {
-  modelSauce.find()
-    .then(things => res.status(200).json(things))
-    .catch(error => res.status(400).json({ error }));
-});
-
-
-
-app.use((req, res, next) => {
-    res.status(201);
-    next();
-  });
-  
-  app.use((req, res, next) => {
-    res.json({ message: 'Votre requête a bien été reçue !' });
-    next();
-  });
-  
-  app.use((req, res, next) => {
-    console.log('Réponse envoyée avec succès !');
-  });
   
 // importation du router
 app.use('/api/sauces', routesSauces);
-app.use('api/auth', routesUser);
+app.use('/api/auth', routesUser);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
