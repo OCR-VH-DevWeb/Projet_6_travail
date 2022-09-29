@@ -4,18 +4,23 @@ const User = require('../models/modelUser');
 
 const jwt = require('jsonwebtoken');
 
+const salt = parseInt(process.env.SALT);
+
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10)
-    .then(hash => {
-        const user = new User({
-            email: req.body.email,
-            password: hash
-        });
-        user.save()
-        .then(() => res.status(201).json({ message: 'Utilisateur créé !'}))
-        .catch(error => res.status(400).json({ error }));
-    })
-    .catch(error => res.status(500).json({ error }));
+    bcrypt.genSalt(salt)
+        .then(saltRes => {
+            bcrypt.hash(req.body.password, saltRes)
+                .then(hash => {
+                    const user = new User({
+                        email: req.body.email,
+                        password: hash
+                    });
+                    user.save()
+                        .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+                        .catch(error => res.status(400).json({ error }));
+                })
+                .catch(error => res.status(500).json({ error }));
+        })
 };
 
 exports.login = (req, res, next) => {
@@ -33,7 +38,7 @@ exports.login = (req, res, next) => {
                         userId: user._id,  //._id est-cce la bonne syntaxe?
                         token: jwt.sign(
                             { userId: user._id },
-                            'RANDOM_TOKEN_SECRET',
+                            "`${process.env.SECRET_TOKEN}`",
                             { expiresIn: '24h' }
                         )
                     });

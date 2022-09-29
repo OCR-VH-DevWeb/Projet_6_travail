@@ -1,3 +1,5 @@
 /node_modules
-images/*
+images/*        
 !images/.gitkeep
+#permet à l'utilisateur de conserver ses images et d'ignorer le contenu sauf le gitkeep 
+.env
